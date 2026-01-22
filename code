@@ -1,0 +1,21 @@
+import pandas as pd
+import numpy as np
+df = pd.read_csv("/content/archive (1).zip")
+df.head()
+num_cols = df.select_dtypes(include=['int64','float64']).columns
+cat_cols = df.select_dtypes(include=['object']).columns
+print("Numerical:", num_cols)
+print("Categorical:", cat_cols)
+from sklearn.preprocessing import LabelEncoder
+
+le = LabelEncoder()
+df['income'] = le.fit_transform(df['income'])
+df = pd.get_dummies(df, columns=cat_cols, drop_first=True)
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+df[num_cols] = scaler.fit_transform(df[num_cols])
+df[num_cols].describe()
+df[num_cols].mean()  # approx 0
+df[num_cols].std()   # approx 1
+df.to_csv("adult_processed.csv", index=False)
